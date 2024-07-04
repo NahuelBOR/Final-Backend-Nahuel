@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "title": "ZAPATILLAS",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+    "price": 199999,
+    "thumbnails": [
+      "/images/img.jpg"
+    ],
+    "code": "654453026949400",
+    "stock": 4,
+    "status": true,
+    "category": "Calzado"
+  },
+  {
+    "id": 2,
+    "title": "REMERA",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+    "price": 55000,
+    "thumbnails": [
+      "/images/img.jpg"
+    ],
+    "code": "12367MA018BR1R7",
+    "stock": 10,
+    "status": true,
+    "category": "Calzado"
+  },
+  {
+    "id": 3,
+    "title": "CAMPERAON",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+    "price": 87.999,
+    "thumbnails": [
+      "/images/img.jpg"
+    ],
+    "code": "100020H58592001",
+    "stock": 3,
+    "status": true,
+    "category": "Camperas"
+  },
+  {
+    "id": 4,
+    "title": "PANTALONES",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+    "price": 7.499,
+    "thumbnails": [
+      "/images/img.jpg"
+    ],
+    "code": "100040DZ9400001",
+    "stock": 15,
+    "status": true,
+    "category": "Accesorios"
+  },
+  {
+    "id": 5,
+    "title": "ZAPATILLAS",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+    "price": 74999,
+    "thumbnails": [
+      "/images/img.jpg"
+    ],
+    "code": "100010GW8336001",
+    "stock": 9,
+    "status": true,
+    "category": "Calzado"
+  }
+]

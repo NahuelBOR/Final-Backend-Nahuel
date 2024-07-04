@@ -1,0 +1,99 @@
+
+
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout-btn" href="#">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container profile-container">
+        <div class="text-center">
+            <h1>{{#if user.first_name}}
+                <p> <strong> Hola, {{user.first_name}}!</strong></p>
+                {{/if}}</h1>
+                <p>PERFIL</p>
+        </div>
+
+        <hr>
+
+        <div class="profile-info">
+            <h4>Información Personal</h4>
+            <p><strong>Nombre:</strong> {{user.first_name}}</p>
+            <p><strong>Apellido:</strong> {{user.last_name}}</p>
+            <p><strong>Edad:</strong> {{user.age}}</p>
+            <p><strong>Email:</strong> {{user.email}}</p>
+            <p><strong>Membresia:</strong> {{user.role}}</p>
+        </div>
+
+        <div class="btn-container">
+            {{#if isAdmin}}
+            <a href="/users" class="btn btn-secondary">Administrar usuarios</a>
+            <a href="/addproducts" class="btn btn-dark" id="modify-products-btn">Modificar productos</a>
+
+            {{else}}
+            <a href="#" class="btn btn-dark" id="modify-products-btn">Modificar productos</a>
+            <a href="/users/premium/{{user._id}}" class="btn btn-warning">Pasar a premium</a>
+            {{/if}}
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', async function (event) {
+            event.preventDefault();
+            try {
+                const response = await fetch('/api/sessions/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error al cerrar sesión');
+                }
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
+        });
+
+        document.getElementById('modify-products-btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        const userRole = "{{user.role}}";
+        if (userRole !== 'premium' && userRole !== 'admin') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Acceso no autorizado',
+                text: 'Necesitas ser premium para agregar un producto.',
+            });
+        } else {
+            window.location.href = '/addproducts';
+        }
+    });
+    </script>    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.3/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.3/dist/sweetalert2.min.css">
+</body>
+
+</html>

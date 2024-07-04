@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text">
+                            Hola {{#if user.first_name}}{{user.first_name}}{{else}}{{user.name}}{{/if}}
+                        </span>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Productos</a>
+                    </li>
+                    {{#unless isAdmin}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carts/{{user.cartId}}">Ir al carrito</a>
+                    </li>
+                    {{/unless}}
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout-btn" href="#">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4">Detalle del Pago</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Productos en tu Carrito</h5>
+                <ul class="list-group">
+                    {{#each cart.products}}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{this.product.title}}
+                        <span class="badge badge-primary badge-pill">{{this.quantity}}</span>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="card-footer text-muted">
+                <strong>Total: ${{totalPrice}}</strong>
+            </div>
+        </div>
+
+        <form id="payment-form" action="/api/payments/process-payment/{{cart._id}}" method="POST">
+            <div class="form-group">
+                <label for="card-element">
+                    Ingresa los detalles de tu tarjeta de crédito
+                </label>
+                <div id="card-element">
+                </div>
+                <div id="card-errors" role="alert"></div>
+            </div>
+
+            <button class="btn btn-primary" id="submit-payment">
+                Pagar
+            </button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', async function (event) {
+            event.preventDefault();
+            try {
+                const response = await fetch('/api/sessions/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error al cerrar sesión');
+                }
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
+        });
+
+        const stripePublicKey = "{{stripePublicKey}}";
+        const stripe = Stripe(stripePublicKey);
+        const elements = stripe.elements();
+
+        const card = elements.create('card');
+        card.mount('#card-element');
+
+        card.on('change', ({ error }) => {
+            const displayError = document.getElementById('card-errors');
+            if (error) {
+                displayError.textContent = error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            try {
+                const { token, error } = await stripe.createToken(card);
+
+                if (error) {
+                    const errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = error.message;
+                } else {
+                    stripeTokenHandler(token);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error generando token de pago',
+                    text: error.message,
+                });
+            }
+        });
+
+        async function stripeTokenHandler(token) {
+            try {
+                const paymentResponse = await fetch(`/api/payments/process-payment/{{cart._id}}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ stripeToken: token.id })
+                });
+
+                const paymentResult = await paymentResponse.json();
+
+                if (paymentResponse.ok) {
+                    const purchaseResponse = await fetch(`/api/carts/{{cart._id}}/purchase`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const purchaseResult = await purchaseResponse.json();
+
+                    if (purchaseResponse.ok) {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Compra realizada con éxito',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        window.location.href = '/products';
+                    } else {
+                        await Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la compra',
+                            text: purchaseResult.message
+                        });
+                    }
+                } else {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error en el pago',
+                        text: paymentResult.message
+                    });
+                }
+            } catch (error) {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error en el pago',
+                    text: error.message
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

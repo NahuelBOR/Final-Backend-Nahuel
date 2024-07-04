@@ -1,0 +1,13 @@
+<body>
+    <h1>Compra Finalizada</h1>
+    <h2>Detalles</h2>
+    <ul>
+        {{#each purchasedProducts}}
+            <li>{{this.quantity}}x {{this.product.name}} - {{this.product.price}}$</li>
+        {{/each}}
+    </ul>
+    <p>Total: {{total}}$</p>
+    <h2>Información del Comprador</h2>
+    <p>Nombre: {{purchaser.firstname}} {{purchaser.lastname}}</p>
+</body>
+</html>
