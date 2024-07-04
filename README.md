@@ -1,4 +1,4 @@
-##Profesor, tratando de agregar cosas a ultimo momento rompi todo, estoy iniciando un unevo proyectod esde cero por si es que este no esta aprobado, por favor si es posible para repararlo, espero que pueda entender y espero que sea suficiente
+## Profesor, tratando de agregar cosas a ultimo momento rompi todo, estoy iniciando un unevo proyectod esde cero por si es que este no esta aprobado, por favor si es posible para repararlo, espero que pueda entender y espero que sea suficiente
 
 ## Nahuel Final BackEnd
 
@@ -16,8 +16,8 @@ GITHUB_CLIENT_SECRET=c13659a0672edadbf07cb68c33fef094eb3aff66
 USER_NODEMAILER=elnau94@gmail.com
 PASS_NODEMAILER=jzaxngygbxdmqkrq
 
-USER_ADMIN=adminadmin@admin.com
-PASS_ADMIN=admin1234
+USER_ADMIN=nahuel01@gmail.com
+PASS_ADMIN=123456
 
 STRIPE_PUBLIC_KEY=pk_test_51PYJYqC30vn0C5aXV8it9y3erPKVZA0yQhk6Rd4BvZUWqZg23bGM442okWTVehhATTHMQZ4PzlRvLQwGRzOA4ThL00ICokb03L
 STRIPE_SECRET_KEY=sk_test_51PYJYqC30vn0C5aXv0qGYT7sl40p6tsc93caFczRS8k4x4gx4nfuyUU76a8crZXD75Mebqh405OtbJcFbEIokbdM00OlL8WyFz
@@ -78,7 +78,3 @@ STRIPE_SECRET_KEY=sk_test_51PYJYqC30vn0C5aXv0qGYT7sl40p6tsc93caFczRS8k4x4gx4nfuy
 - POST /api/users/:uid/documents
 ```
 
-## Usuario y contraseña del administrador:
-
-USER_ADMIN=adminadmin@admin.com
-PASS_ADMIN=admin1234
