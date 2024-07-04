@@ -26,10 +26,9 @@ class CartService {
         }
     }
 
-    async createCart(req) {
+    async createCart() {
         try {
             const newCart = await Cart.create({ products: [] });
-            req.logger.info('Carrito creado:', newCart);
             return newCart;
         } catch (error) {
             req.logger.error('Error al crear el carrito:', error);

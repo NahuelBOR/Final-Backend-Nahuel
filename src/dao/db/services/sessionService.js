@@ -56,7 +56,7 @@ class SessionService {
             }
 
             const role = email === 'adminadmin@admin.com' ? 'admin' : 'user';
-            const newCart = await cartService.createCart(req);
+            const newCart = await cartService.createCart();
 
             const newUser = new User({
                 first_name,
@@ -65,7 +65,7 @@ class SessionService {
                 age,
                 password,
                 role,
-                cartId: newCart._id
+                cartId: newCart
             });
 
             await newUser.save();

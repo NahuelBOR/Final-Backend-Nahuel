@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos Falsos</title>
-</head>
 <body>
     <div class="container">
-        <h2 class="mt-4">Productos Generados con Faker</h2>
+        <h2 class="mt-4">Productos con Faker (lol)</h2>
         {{#if products.length}}
             <div class="card-deck">
                 {{#each products}}
                     <div class="card" id="{{this.id}}">
-                        <img src="{{this.thumbnails.[0]}}" class="card-img-top" alt="{{this.title}}">
                         <div class="card-body">
-                            <h5 class="card-title">{{this.title}}</h5>
+                            <h5 class="card-title">{{this.name}}</h5>
                             <p class="card-text">Precio: ${{this.price}}</p>
                         </div>
                     </div>

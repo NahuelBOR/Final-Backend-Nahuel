@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pago</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-</head>
-
 <body>
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
@@ -20,7 +9,7 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <span class="navbar-text">
-                            Hola {{#if user.first_name}}{{user.first_name}}{{else}}{{user.name}}{{/if}}
+                            {{#if user.first_name}}Hola {{user.first_name}}{{/if}}
                         </span>
                     </li>
                 </ul>
@@ -166,7 +155,7 @@
                         await Swal.fire({
                             icon: 'success',
                             title: 'Compra realizada con éxito',
-                            timer: 2000,
+                            timer: 3000,
                             showConfirmButton: false
                         });
                         window.location.href = '/products';

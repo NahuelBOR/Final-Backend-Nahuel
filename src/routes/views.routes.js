@@ -9,7 +9,7 @@ const path = require('path');
 const mongoose = require('mongoose')
 
 viewsRouter.get(`/`, (req, res) => {
-    res.redirect('/login')
+    res.redirect('/products')
 });
 
 //-CARTS
