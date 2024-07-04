@@ -1,0 +1,31 @@
+<div >
+    <h1 class="titulo">Productos</h1>
+
+    <div class="container">
+        Precio: 
+        <a href="{{resp.link}}des">Descendente &#9660</a>
+        <a href="{{resp.link}}asc">Descendente &#9650</a>
+        <div class="prods">
+            {{#each prods}}
+                    <div class="prod">
+                        <h3>{{this.name}}</h3>
+                        <div>Precio: {{this.price}}</div>
+                        <div>Categotia: {{this.category}}</div>
+                        <div>stock: {{this.stock}}</div>
+                    </div>
+            {{/each}}
+        </div>
+        <div>Pagina {{resp.page}}/{{resp.totalPages}}</div>
+        <div class="link">
+            {{#if resp.prevLink}}
+            <div>{{resp.prevPage}}-<a href="{{resp.prevLink}}">Pagina anterior</a></div>
+            {{/if}}
+            {{#if resp.nextLink}}
+            <div><a href="{{resp.nextLink}}">Pagina siguiente</a>-{{resp.nextPage}}</div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/products.js">resp</script>

@@ -1,4 +1,4 @@
-## Profesor, tratando de agregar cosas a ultimo momento rompi todo, estoy iniciando un unevo proyectod esde cero por si es que este no esta aprobado, por favor si es posible para repararlo, espero que pueda entender y espero que sea suficiente
+## Profesor, tratando de agregar cosas a ultimo momento rompi todo, estoy resubiendo un trabajo muy viejo que fue lo unico que pue encontrar que al menos funcionaba, voy a tratar de actualizarlo lo mas posible, este fin de semana 6/7 y 7/7 voy a pedir dias en el trabajo para al menos tener lo maximo posible, espero que sepa entender
 
 ## Nahuel Final BackEnd
 

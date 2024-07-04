@@ -1,0 +1,30 @@
+.caja {
+    height: 60vh;
+    overflow-y: auto;
+}
+
+.titulo {
+    margin-left: 150px;
+}
+
+.container {
+    width: 70%
+}
+
+.prods {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    height: 400px;
+}
+ .prod {
+    width: 150px;
+    height: 150px;
+ }
+
+.link {
+    display: flex;
+    justify-content: space-around;
+}

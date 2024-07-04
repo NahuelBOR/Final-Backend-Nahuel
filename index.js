@@ -1,166 +1,146 @@
-const express = require('express');
-const methodOverride = require('method-override');
-const paymentRouter = require('./src/routes/payments.routes.js');
-const config = require('./src/config/config.js');
-const mockingRouter = require('./src/routes/mocking.routes.js');
-const loggerTestRouter = require('./src/routes/loggerTests.routes.js');
-const viewsRouter = require('./src/routes/views.routes.js')
-const exphbs = require('express-handlebars');
-const cors = require('cors');
-const productRouter = require('./src/routes/products.routes.js');
-const cartRouter = require('./src/routes/carts.routes.js');
-const chatRouter = require('./src/routes/chat.routes.js');
-const sessionRouter = require('./src/routes/sessions.routes.js');
-const mailRouter = require('./src/config/mail.js');
-const userRouter = require(`./src/routes/users.routes.js`);
-const path = require('path');
-const http = require(`http`);
-const { Server } = require(`socket.io`);
+import express from 'express'
+import { engine } from 'express-handlebars'
+import { __dirname } from './path.js'
+import routerHome from './routes/index.routes.js'
+import prodRoutes from './routes/products.routes.js'
+import cartRoutes from './routes/cart.routes.js'
+import { Server } from "socket.io"
+import { createServer } from 'node:http';
+import dataBase from './dao/db/index.js'
+import { ChatManagerMongo } from './dao/db/ManagerMongo/chatManager.js'
+import { ProductManagerMongo } from './dao/db/ManagerMongo/productManager.js'
+import cookieParser from 'cookie-parser'
+import cookRoutes from './routes/cookies.routes.js'
+import session from 'express-session'
+import sessionFileStore from 'session-file-store';
+import MongoStore from 'connect-mongo'
+import viewRoutes from './routes/views.routes.js'
+import authRoutes from './routes/auth.routes.js'
+import userRoutes from './routes/users.routes.js'
+import passport from 'passport'
+import { initializePassport } from './passport/passport.js'
+import githubRouter from './routes/githubSession.routes.js'
+import cors from 'cors'
+import nodemailer from 'nodemailer'
+const FileStore = sessionFileStore(session);
 
-const app = express();
-const HOST = config.host;
-const PORT = config.port;
-const { initPassport } = require('./src/config/passport.config.js');
-const passport = require('passport');
-const loggerMiddleware = require('./src/config/logger.js');
-const swaggerJSDoc = require(`swagger-jsdoc`)
-const swaggerUIExpress = require(`swagger-ui-express`)
-const server = http.createServer(app)
-const DataBase = require('./src/dao/db/db.js')
-const ChatService = require('./src/dao/db/services/chatService.js')
-const session = require('express-session')
-const MongoStore = require('connect-mongo')
-const bodyParser = require('body-parser')
+const chatManager = new ChatManagerMongo()
+
+//Iniciar session-express
 
 
-let msjs = []
+const app = express()
+const server = createServer(app);
+const PORT = 8080 || process.env.PORT
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.get(cors())
 
-//SWAGGER
-const swaggerOptions = {
-    definition: {
-        openapi: "3.0.1",
-        info: {
-            title: "Documentacion API",
-            description: "Documentacion API con swagger"
-        }
-
-    }, apis: [`./src/docs/**/*.yaml`]
-}
-
-const specs = swaggerJSDoc(swaggerOptions)
-app.use(`/apidocs`, swaggerUIExpress.serve, swaggerUIExpress.setup(specs))
-
-app.use(express.urlencoded({ extended: true })); 
-app.use(methodOverride('_method'));
-app.use((req, res, next) => {
-    next();
-});
-
-//PUBLIC
-app.use(express.static(__dirname + "/src/public"));
-app.use(express.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cors()) 
-
-//SESSION 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: config.dbUrl
+        mongoUrl: 'mongodb+srv://elnau94:necochea53@cluster0.cn8xroo.mongodb.net/ecomerce'
     }),
-    secret: config.sessionSecret,
+    secret: 'codersecret',
     resave: true,
     saveUninitialized: true
 }))
 
-initPassport();
-app.use(passport.initialize());
-app.use(passport.session());
+let msjs = []
 
-app.use(loggerMiddleware);
+//PUBLIC
+app.use(express.static(__dirname + '/public'))
 
-//ROUTES
-app.use(productRouter);
-app.use('/api/carts', cartRouter);
-app.use('/chat', chatRouter);
-app.use('/api/sessions', sessionRouter);
-app.use('/mail', mailRouter);
-app.use(userRouter)
-app.use(mockingRouter);
-app.use(loggerTestRouter);
-app.use(viewsRouter) 
-app.use('/api/payments', paymentRouter)
-
-const hbs = exphbs.create({
-    helpers: {
-        eq: function(a, b) {
-            return a === b;
-        },
-        hasDocument: function (documents, name) {
-            if (name === 'document') {
-                return documents.some(doc => doc.status === 'completado');
-            } else {
-                return documents.some(doc => doc.name === name && doc.status === 'completado');
-            }
-        },
-        displayName: function(user) {
-            if (user.name) {
-                return user.name;
-            } else {
-                return `${user.first_name} ${user.last_name}`;
-            }
-        },
-        range: function (start, end) {
-            let array = [];
-            for (let i = start; i <= end; i++) {
-                array.push(i);
-            }
-            return array;
-        }
-    }
-});
 
 //ENGINE
-app.engine('handlebars', hbs.engine);
-app.set(`view engine`, `handlebars`);
-app.set('views', __dirname + '/src/views');
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', __dirname + '/views');
 
-// CONNECCION io
+//ROUTES
+app.use('/api', routerHome)
+app.use('/api/prod', prodRoutes)
+app.use('/api/cart', cartRoutes)
+app.use('/api/cookies', cookRoutes)
+app.use('/api/view', viewRoutes)
+app.use('/api', authRoutes)
+app.use('/api/user', userRoutes)
+app.use('/api/sessions', githubRouter)
+app.use(cookieParser('codersecret'))
 
-const io = new Server(server, {
-    cors: {
-        origin: `http://${HOST}:${PORT}`,
-        methods: ["GET", "POST"]
-    }
+const io = new Server(server)
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+  
+// MAIL
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: "elnau94@gmail.com",
+        pass: "jzaxngygbxdmqkrq"
+    },
 });
+
+app.use('/mail', async (req, res) => {
+    let mensaje = await transporter.sendMail({
+        from: 'Codet Test <elnau94@gmail.com>',
+        to: 'camillee.krk@gmail.com',
+        subject: 'Prueba test',
+        text: 'Texto',
+        html: `
+        <div>
+        <h2>Lorem ipsum</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        `
+    })
+    if (!!mensaje.messageId) {
+        console.log('Mensaje enviado', mensaje.messageId);
+        res.send('Mensaje enviado')
+    }
+})
+
+
 
 io.on('connection', (socket) => {
-    console.log('Cliente conectado');
+    console.log('User Connected');
 
-    socket.on('productAdded', (newProduct) => {
-        if (newProduct) {
-            console.log('Producto agregado:', newProduct);
-            io.emit('updateProducts', newProduct);
-        } else {
-            console.error('error al cargar');
-        }
-    });
+    socket.on('msjNuevo', async (data) => {
+        await chatManager.addMsj(data)
+        io.sockets.emit('msjChat', await chatManager.allMsj())
+        //msjs.push(data)
+        //io.sockets.emit('msjChat', msjs)
+    })
 
-    socket.on('productDeleted', (productId) => {
-        if (productId) {
-            console.log(`Producto con ID ${productId} eliminado`);
-            io.emit('updateProducts', { deletedProductId: productId });
-        } else {
-            console.error('error al eliminar');
-        }
-    });
-});
+    /*let allProds = async () => {
+        socket.emit('prods', await productManager.allProduct())
+    }
+    allProds()*/
+})
 
-const chatService = new ChatService(io);
-chatService.init();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 server.listen(PORT, () => {
-    console.log('Server running on port ', PORT);
-    DataBase.connect();
-});
+    console.log('Server running on port: ', PORT);
+    dataBase.connect()
+})
+

@@ -1,0 +1,18 @@
+<div class="container">
+    <h1>Chat</h1>
+    <div class="caja" id="caja"></div>
+    <form onsubmit="return addMessages()">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Tu Nombre:</label>
+            <input type="text" class="form-control" id="nombre" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="mensaje" class="form-label">Mensaje</label>
+            <textarea name="mensaje" id="mensaje" class="form-control" cols="7" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
