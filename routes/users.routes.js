@@ -4,6 +4,7 @@ import passport from "passport";
 import { initializePassport, authorization } from "../passport/passport.js";
 import { User } from "../dao/db/models/users.model.js";
 import { isAuthenticated, isAdmin } from "../utils/middleware/auth.js";
+import { sendDeletionEmail } from "../utils/mail.js";
 
 const userRoutes = Router()
 
@@ -19,7 +20,6 @@ userRoutes.post('/login', async (req, res) => {
     let userNew = req.body
     try {
         let userFound = await User.findOne({email: userNew.email})
-        console.log(userFound) 
         if(userFound){
             if (isValidPass(userFound, userNew.password)) {
                 req.session.userId = userFound.email
@@ -48,5 +48,27 @@ userRoutes.get('/users', isAuthenticated, isAdmin, async (req, res) => { // DEBE
     let users = await User.find()
     res.send(users)
 })
+
+userRoutes.get('/delete', async (req, res) => {
+    try {
+      const twoDaysAgo = new Date();
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  
+      // Encontrar usuarios que serán eliminados
+      const usuariosAEliminar = await User.find({ last_connection: { $lt: twoDaysAgo } });
+  
+      // Eliminar usuarios
+      const result = await User.deleteMany({ last_connection: { $lt: twoDaysAgo } });
+  
+      // Enviar correos electrónicos
+      for (const usuario of usuariosAEliminar) {
+        await sendDeletionEmail(usuario);
+      }
+  
+      res.json({ message: `${result.deletedCount} usuarios eliminados y notificados` });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al eliminar usuarios', error });
+    }
+  });
 
 export default userRoutes

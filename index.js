@@ -22,25 +22,30 @@ import { initializePassport } from './passport/passport.js'
 import githubRouter from './routes/githubSession.routes.js'
 import cors from 'cors'
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
 const FileStore = sessionFileStore(session);
 
 const chatManager = new ChatManagerMongo()
+
+dotenv.config()
 
 //Iniciar session-express
 
 
 const app = express()
 const server = createServer(app);
-const PORT = 8080 || process.env.PORT
+const PORT = process.env.PORT || 8080
+const MONGODB_URI = process.env.MONGODB_URI
+const SESSION_SECRET = process.env.SESSION_SECRET
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.get(cors())
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://elnau94:necochea53@cluster0.cn8xroo.mongodb.net/ecomerce'
+        mongoUrl: MONGODB_URI
     }),
-    secret: 'codersecret',
+    secret: SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }))
@@ -57,13 +62,13 @@ app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
 
 //ROUTES
+//app.use('/api', authRoutes)
 app.use('/api', routerHome)
 app.use('/api/prod', prodRoutes)
 app.use('/api/cart', cartRoutes)
-app.use('/api/cookies', cookRoutes)
 app.use('/api/view', viewRoutes)
-app.use('/api', authRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/cookies', cookRoutes)
 app.use('/api/sessions', githubRouter)
 app.use(cookieParser('codersecret'))
 
@@ -79,8 +84,8 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
-        user: "elnau94@gmail.com",
-        pass: "jzaxngygbxdmqkrq"
+        user: process.env.USER_NODEMAILER,
+        pass: process.env.PASS_NODEMAILER
     },
 });
 

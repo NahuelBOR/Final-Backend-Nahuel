@@ -7,7 +7,7 @@ describe('Testing Product API', () => {
     let expect;   
 
     before(async () => {
-        await mongoose.connect('mongodb+srv://elnau94:necochea53@cluster0.cn8xroo.mongodb.net/ecomerce', {
+        await mongoose.connect(process.env.MONGODB_URI, {
         });
 
         const chai = await import('chai');

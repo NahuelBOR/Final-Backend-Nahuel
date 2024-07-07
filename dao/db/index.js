@@ -6,7 +6,7 @@ import { Product } from './models/products.model.js';
 const dataBase = {
     //connetion: null,
     connect: () => {
-        return mongoose.connect("mongodb+srv://elnau94:necochea53@cluster0.cn8xroo.mongodb.net/ecomerce")
+        return mongoose.connect(process.env.MONGODB_URI)
         .then( async () => {
             console.log('Base de Datos Conectada');
 
