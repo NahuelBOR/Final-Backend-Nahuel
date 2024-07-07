@@ -69,6 +69,19 @@ export class ProductManagerMongo{
         }
     }
 
+    async getProductsByIds(prodsId){
+        try{
+            let prods = []
+            for (let index = 0; index < prodsId.length; index++) {
+                let resp = await Product.findById(prodsId[index].product)
+                prods.push(resp)
+            }
+            return prods
+        }catch(err){
+            return 'Error: ', err
+        }
+    }
+
     async updateProductById(id, change) {
         try{
             await Product.findByIdAndUpdate(id, change)

@@ -6,5 +6,20 @@
     <a href="/api/user/users">Todos los Usuarios</a>
     <br>
     <br>
+    <br>
+    <h2>Carrito</h2>
+    <div class="prods">
+    {{#each prods}}
+    <div class="prod">
+        <h3>{{this.name}}</h3>
+        <div>Precio: {{this.price}}</div>
+        <div>Categotia: {{this.category}}</div>
+        <div>stock: {{this.stock}}</div>
+    </div>
+    {{/each}}
+    </div>
+    <br>
     <a href="/api/user/logout">Logout</a>
 </div>
+
+<script src="/js/products.js">resp</script>

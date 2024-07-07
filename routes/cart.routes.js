@@ -62,6 +62,16 @@ cartRoutes.put('/:cid/products/:pid', async (req, res) => { //PUT api/carts/:cid
     }
 })
 
+cartRoutes.get('/:uid/products/:pid', async (req, res) => {
+    const { uid , pid} = req.params
+    const confirm = await cartManager.agregaUnProd(uid, pid)
+    if(confirm === true){
+        res.status(200).send('Producto agregado')
+    }else{
+        res.status(404).send('Producto no encontrado')
+    }
+})
+
 cartRoutes.delete('/delete/:id', async (req, res) => {
     const { id } = req.params
     const confirm = await cartManager.deleteCartById(id)

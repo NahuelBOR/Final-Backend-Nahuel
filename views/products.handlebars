@@ -12,7 +12,9 @@
                         <div>Precio: {{this.price}}</div>
                         <div>Categotia: {{this.category}}</div>
                         <div>stock: {{this.stock}}</div>
+                        <a class="" id="addprod" href='/api/cart/{{this.userId}}/products/{{this._id}}'>Agregar al carrito</a>
                     </div>
+                    
             {{/each}}
         </div>
         <div>Pagina {{resp.page}}/{{resp.totalPages}}</div>

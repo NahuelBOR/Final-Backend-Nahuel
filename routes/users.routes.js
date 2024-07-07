@@ -24,6 +24,7 @@ userRoutes.post('/login', async (req, res) => {
             if (isValidPass(userFound, userNew.password)) {
                 req.session.userId = userFound.email
                 req.session.admin = userFound.role == 'admin' ? true : false
+                req.session.user = userFound
                 return res.redirect('/api/view/profile')
             }
             return res.send('Password incorrecto')

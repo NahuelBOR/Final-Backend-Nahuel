@@ -1,4 +1,5 @@
 import { Cart } from '../models/carts.model.js'
+import { User } from '../models/users.model.js'
 
 export class CartManagerMongo{
 
@@ -59,6 +60,17 @@ export class CartManagerMongo{
             }
             resp.products[index].cant = body
             await Cart.findByIdAndUpdate(cid, resp)
+            return true
+        }catch(err){
+            return 'Error: ', err
+        }
+    }
+
+    async agregaUnProd(uid, pid) {
+        try{ 
+            let user = await User.findOne({_id: uid})
+            user.cart[0].products.push({product: pid})
+            await User.updateOne({_id: uid}, user)
             return true
         }catch(err){
             return 'Error: ', err

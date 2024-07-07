@@ -1,16 +1,19 @@
 import { Router } from "express";
 import { ProductManagerMongo } from "../dao/db/ManagerMongo/productManager.js";
+import { isAuthenticated } from "../utils/middleware/auth.js";
 
 
 const productManager = new ProductManagerMongo()
 
 const prodRoutes = Router()
 
-prodRoutes.get('/allProducts/:page/:lim/:ord', async (req, res) => {
+prodRoutes.get('/allProducts/:page/:lim/:ord', isAuthenticated, async (req, res) => {
     let page = req.params.page || 1
     let limit = req.params.lim || 10
     let ord = req.params.ord
     let resp = await productManager.allProduct(page, limit, ord)
+    let userCartId = req.session.user.cart[0]._id
+    let userId = req.session.user._id
     let prods = []
     //Volviendo a hacer un array a parte es la unica manera que me dejaba usar el each de Handlebars
     for (let index = 0; index < resp.payload.length; index++) {
@@ -19,6 +22,9 @@ prodRoutes.get('/allProducts/:page/:lim/:ord', async (req, res) => {
         prueba.price = resp.payload[index].price
         prueba.category = resp.payload[index].category
         prueba.stock = resp.payload[index].stock
+        prueba._id = resp.payload[index]._id
+        prueba.userCartId = userCartId
+        prueba.userId = userId
         prods.push(prueba)
     }
     
