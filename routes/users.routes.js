@@ -5,8 +5,11 @@ import { initializePassport, authorization } from "../passport/passport.js";
 import { User } from "../dao/db/models/users.model.js";
 import { isAuthenticated, isAdmin } from "../utils/middleware/auth.js";
 import { sendDeletionEmail } from "../utils/mail.js";
+import { UserManagerMongo } from "../dao/db/ManagerMongo/users.model.js";
 
 const userRoutes = Router()
+
+const userManager = new UserManagerMongo
 
 userRoutes.post('/register', passport.authenticate('register', {failureRedirect: 'user/failedRegister'}), (req, res) => {
     res.send('User register')
@@ -47,6 +50,13 @@ userRoutes.get('/logout', (req, res) => {
 userRoutes.get('/users', isAuthenticated, isAdmin, async (req, res) => { // DEBE SER ADMIN PARA VER TODOS LOS USUARIOS
     let users = await User.find()
     res.send(users)
+})
+
+userRoutes.get('/deleteProd/:pid', isAuthenticated, async (req, res) => {
+    let pid = req.params.pid
+    let userId = req.session.user._id
+    await userManager.deleteOneProd(userId, pid)
+    res.redirect('/api/view/profile') 
 })
 
 userRoutes.get('/delete', async (req, res) => {

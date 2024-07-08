@@ -80,7 +80,7 @@ app.use(passport.session())
   
 // MAIL
 
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
@@ -106,7 +106,7 @@ app.use('/mail', async (req, res) => {
         console.log('Mensaje enviado', mensaje.messageId);
         res.send('Mensaje enviado')
     }
-})
+})*/
 
 
 

@@ -19,7 +19,7 @@ viewRoutes.get('/register', (req, res) => {
 })
 
 viewRoutes.get('/profile', isAuthenticated, async(req, res) => {
-    let resp = await userManager.getProductsByUser(req.session.user.cart[0].products)
+    let resp = await userManager.getProductsByUser(req.session.user._id)
     let prods = []
     //Volviendo a hacer un array a parte es la unica manera que me dejaba usar el each de Handlebars
     for (let index = 0; index < resp.length; index++) {

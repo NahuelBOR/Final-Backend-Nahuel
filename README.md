@@ -2,9 +2,18 @@
 
 ## Nahuel Final BackEnd
 
+## Ruta Home
 ```
-#.env
+# http://localhost:8080/api/view/home
+```
 
+## Railway link
+```
+# https://final-backend-nahuel-production.up.railway.app/api/view/home
+```
+
+## .env
+```
 PORT=8080
 MONGODB_URI=mongodb+srv://elnau94:necochea53@cluster0.cn8xroo.mongodb.net/ecomerce
 SESSION_SECRET=codersecret
